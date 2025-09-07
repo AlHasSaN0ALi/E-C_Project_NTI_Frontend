@@ -1,0 +1,201 @@
+<div class="order-details-container" *ngIf="order; else loadingTemplate">
+  <!-- Header -->
+  <div class="header-section">
+    <button mat-button routerLink="/orders" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Orders
+    </button>
+    <h1 class="page-title">
+      <mat-icon>receipt_long</mat-icon>
+      Order Details
+    </h1>
+    <p class="order-number">Order #{{ order.orderNumber }}</p>
+  </div>
+
+  <!-- Order Status -->
+  <div class="status-section">
+    <mat-card class="status-card">
+      <mat-card-content>
+        <div class="status-header">
+          <div class="status-info">
+            <h3>Order Status</h3>
+            <mat-chip [color]="getStatusColor(order.status)" selected class="status-chip">
+              <mat-icon>{{ getStatusIcon(order.status) }}</mat-icon>
+              {{ order.status | titlecase }}
+            </mat-chip>
+          </div>
+          <div class="status-actions" *ngIf="order.status !== 'cancelled' && order.status !== 'refunded'">
+            <button mat-button (click)="trackOrder()" class="track-btn">
+              <mat-icon>local_shipping</mat-icon>
+              Track Order
+            </button>
+            <button mat-button color="warn" (click)="cancelOrder()" 
+                    class="cancel-btn" 
+                    *ngIf="canCancelOrder()">
+              <mat-icon>cancel</mat-icon>
+              Cancel Order
+            </button>
+          </div>
+        </div>
+
+        <!-- Status Timeline -->
+        <div class="status-timeline">
+          <mat-stepper orientation="horizontal" [selectedIndex]="getCurrentStepIndex()">
+            <mat-step *ngFor="let step of statusSteps; let i = index" 
+                      [completed]="isStepCompleted(i)"
+                      [state]="isStepActive(i) ? 'active' : (isStepCompleted(i) ? 'completed' : 'none')">
+              <ng-template matStepLabel>
+                <div class="step-content">
+                  <mat-icon [class]="isStepCompleted(i) ? 'step-icon completed' : (isStepActive(i) ? 'step-icon active' : 'step-icon')">
+                    {{ step.icon }}
+                  </mat-icon>
+                  <span class="step-label">{{ step.label }}</span>
+                </div>
+              </ng-template>
+            </mat-step>
+          </mat-stepper>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Order Information -->
+  <div class="order-info-grid">
+    <!-- Order Items -->
+    <mat-card class="items-card">
+      <mat-card-header>
+        <mat-card-title>Order Items ({{ order.items.length }})</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="items-list">
+          <div *ngFor="let item of order.items" class="order-item">
+            <div class="item-image">
+              <img [src]="getImageUrl(item.product)" 
+                   [alt]="item.product.name"
+                   (error)="onImageError($event)">
+            </div>
+            <div class="item-details">
+              <h4 class="item-name">{{ item.product.name }}</h4>
+              <p class="item-category">Product</p>
+              <div class="item-specs">
+                <span class="item-price">${{ item.product.price | number:'1.2-2' }}</span>
+                <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                <span class="item-total">Total: ${{ (item.product.price * item.quantity) | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Order Summary -->
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>Order Summary</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-details">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span>${{ order.subtotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="summary-row" *ngIf="order.shippingCost > 0">
+            <span>Shipping:</span>
+            <span>${{ order.shippingCost | number:'1.2-2' }}</span>
+          </div>
+          <div class="summary-row" *ngIf="order.taxAmount > 0">
+            <span>Tax:</span>
+            <span>${{ order.taxAmount | number:'1.2-2' }}</span>
+          </div>
+          <div class="summary-row" *ngIf="order.discountAmount > 0">
+            <span>Discount:</span>
+            <span class="discount">-${{ order.discountAmount | number:'1.2-2' }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>${{ order.totalAmount | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Shipping Information -->
+    <mat-card class="shipping-card">
+      <mat-card-header>
+        <mat-card-title>Shipping Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="shipping-details">
+          <div class="address-section">
+            <h4>Delivery Address</h4>
+            <div class="address">
+              <p><strong>{{ order.shippingAddress.name }}</strong></p>
+              <p>{{ order.shippingAddress.street }}</p>
+              <p>{{ order.shippingAddress.city }}, {{ order.shippingAddress.state }} {{ order.shippingAddress.zipCode }}</p>
+              <p>{{ order.shippingAddress.country }}</p>
+              <p *ngIf="order.shippingAddress.phone">Phone: {{ order.shippingAddress.phone }}</p>
+            </div>
+          </div>
+          
+          <div class="shipping-method" *ngIf="order.shippingMethod">
+            <h4>Shipping Method</h4>
+            <p>{{ order.shippingMethod.name }}</p>
+            <p class="shipping-time">{{ order.shippingMethod.estimatedDays }} business days</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Payment Information -->
+    <mat-card class="payment-card">
+      <mat-card-header>
+        <mat-card-title>Payment Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="payment-details">
+          <div class="payment-method">
+            <h4>Payment Method</h4>
+            <p>{{ order.paymentMethod.type | titlecase }}</p>
+            <p *ngIf="order.paymentMethod.last4">**** **** **** {{ order.paymentMethod.last4 }}</p>
+          </div>
+          
+          <div class="payment-status">
+            <h4>Payment Status</h4>
+            <mat-chip [color]="order.paymentStatus === 'paid' ? 'primary' : 'warn'" selected>
+              {{ order.paymentStatus | titlecase }}
+            </mat-chip>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Order Timeline -->
+  <mat-card class="timeline-card" *ngIf="order.timeline && order.timeline.length > 0">
+    <mat-card-header>
+      <mat-card-title>Order Timeline</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="timeline">
+        <div *ngFor="let event of order.timeline" class="timeline-event">
+          <div class="timeline-marker">
+            <mat-icon>{{ getStatusIcon(event.status) }}</mat-icon>
+          </div>
+          <div class="timeline-content">
+            <h4>{{ event.status | titlecase }}</h4>
+            <p>{{ event.description }}</p>
+            <span class="timeline-date">{{ formatDate(event.timestamp) }}</span>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <app-loading-spinner message="Loading order details..."></app-loading-spinner>
+  </div>
+</ng-template>

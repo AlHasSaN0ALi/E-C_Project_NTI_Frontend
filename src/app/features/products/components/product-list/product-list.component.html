@@ -1,0 +1,308 @@
+<div class="product-list-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1 class="page-title">
+        <mat-icon>inventory</mat-icon>
+        Products
+      </h1>
+      <p class="page-subtitle">{{ totalProducts }} products available</p>
+    </div>
+    
+    <div class="header-actions">
+      <button mat-icon-button (click)="toggleFilters()" [class.active]="showFilters">
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleViewMode()">
+        <mat-icon>{{ viewMode === 'grid' ? 'view_list' : 'view_module' }}</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <mat-expansion-panel 
+    [expanded]="showFilters" 
+    class="filters-panel"
+    (opened)="showFilters = true"
+    (closed)="showFilters = false"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>tune</mat-icon>
+        Filters & Sorting
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <form [formGroup]="filterForm" class="filters-form">
+      <div class="filters-grid">
+        <!-- Search -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Search Products</mat-label>
+          <input matInput formControlName="search" placeholder="Search by name, description, or brand">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- Category Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category._id">
+              {{ category.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Price Range -->
+        <div class="price-range">
+          <label class="price-label">Price Range</label>
+          <div class="price-inputs">
+            <mat-form-field appearance="outline" class="price-input">
+              <mat-label>Min Price</mat-label>
+              <input matInput type="number" formControlName="minPrice" min="0">
+              <span matPrefix>$&nbsp;</span>
+            </mat-form-field>
+            <span class="price-separator">-</span>
+            <mat-form-field appearance="outline" class="price-input">
+              <mat-label>Max Price</mat-label>
+              <input matInput type="number" formControlName="maxPrice" min="0">
+              <span matPrefix>$&nbsp;</span>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Checkboxes -->
+        <div class="filter-checkboxes">
+          <mat-checkbox formControlName="inStock">In Stock Only</mat-checkbox>
+          <mat-checkbox formControlName="featured">Featured Only</mat-checkbox>
+        </div>
+
+        <!-- Sort Options -->
+        <div class="sort-options">
+          <mat-form-field appearance="outline">
+            <mat-label>Sort By</mat-label>
+            <mat-select formControlName="sortBy">
+              <mat-option value="name">Name</mat-option>
+              <mat-option value="price">Price</mat-option>
+              <mat-option value="rating">Rating</mat-option>
+              <mat-option value="createdAt">Date Added</mat-option>
+            </mat-select>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Order</mat-label>
+            <mat-select formControlName="sortOrder">
+              <mat-option value="asc">Ascending</mat-option>
+              <mat-option value="desc">Descending</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button mat-button (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Clear All
+        </button>
+        <button mat-raised-button color="primary" (click)="applyFilters()">
+          <mat-icon>search</mat-icon>
+          Apply Filters
+        </button>
+      </div>
+    </form>
+  </mat-expansion-panel>
+
+  <!-- Active Filters -->
+  <div class="active-filters" *ngIf="selectedFilters.length > 0">
+    <span class="filters-label">Active Filters:</span>
+    <div class="filter-chips">
+      <mat-chip 
+        *ngFor="let filter of selectedFilters" 
+        (removed)="removeFilter(filter)"
+        [removable]="true"
+      >
+        {{ filter }}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <app-loading-spinner message="Loading products..."></app-loading-spinner>
+  </div>
+
+  <!-- Products Grid/List -->
+  <div class="products-container" *ngIf="!isLoading">
+    <!-- Grid View -->
+    <div class="products-grid" *ngIf="viewMode === 'grid'">
+      <mat-card 
+        *ngFor="let product of filteredProducts" 
+        class="product-card"
+        [routerLink]="['/products', product._id]"
+      >
+        <div class="product-image">
+          <img 
+            [src]="product.images[0] || 'assets/images/placeholder-product.jpg'" 
+            [alt]="product.name"
+            (error)="onImageError($event)"
+          >
+          <div class="product-badges">
+            <mat-chip *ngIf="product.isNew" class="new-badge">New</mat-chip>
+            <mat-chip *ngIf="product.discount && product.discount > 0" class="discount-badge">
+              -{{ product.discount }}%
+            </mat-chip>
+            <mat-chip *ngIf="product.stock < 10 && product.stock > 0" class="stock-badge">
+              Low Stock
+            </mat-chip>
+          </div>
+        </div>
+        
+        <mat-card-content class="product-content">
+          <h3 class="product-name">{{ product.name }}</h3>
+          <p class="product-category">{{ getCategoryName(product.category) }}</p>
+          <p class="product-description">{{ product.description | slice:0:80 }}{{ product.description && product.description.length > 80 ? '...' : '' }}</p>
+          
+          <div class="product-rating" *ngIf="product.averageRating && product.averageRating > 0">
+            <div class="stars">
+              <mat-icon *ngFor="let star of getStars(product.averageRating)" 
+                [class.filled]="star.filled"
+                [class.half]="star.half"
+              >star</mat-icon>
+            </div>
+            <span class="rating-text">({{ product.reviewCount || 0 }})</span>
+          </div>
+
+          <div class="product-pricing">
+            <span class="current-price">${{ product.price | number:'1.2-2' }}</span>
+            <span *ngIf="product.originalPrice && product.originalPrice > product.price" 
+                  class="original-price">${{ product.originalPrice | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="product-stock" [class.low-stock]="product.stock < 10">
+            <mat-icon>inventory</mat-icon>
+            <span>{{ product.stock > 0 ? product.stock + ' in stock' : 'Out of stock' }}</span>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions class="product-actions">
+          <button 
+            mat-button 
+            color="primary" 
+            [disabled]="product.stock === 0"
+            (click)="addToCart(product, $event)"
+          >
+            <mat-icon>add_shopping_cart</mat-icon>
+            Add to Cart
+          </button>
+          <button 
+            mat-icon-button 
+            [matBadge]="product.isWishlisted ? '1' : null" 
+            matBadgeColor="warn"
+            (click)="toggleWishlist(product, $event)"
+          >
+            <mat-icon>{{ product.isWishlisted ? 'favorite' : 'favorite_border' }}</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- List View -->
+    <div class="products-list" *ngIf="viewMode === 'list'">
+      <mat-card 
+        *ngFor="let product of filteredProducts" 
+        class="product-list-item"
+        [routerLink]="['/products', product._id]"
+      >
+        <div class="product-list-content">
+          <div class="product-list-image">
+            <img 
+              [src]="product.images[0] || 'assets/images/placeholder-product.jpg'" 
+              [alt]="product.name"
+              (error)="onImageError($event)"
+            >
+            <div class="product-badges">
+              <mat-chip *ngIf="product.isNew" class="new-badge">New</mat-chip>
+              <mat-chip *ngIf="product.discount && product.discount > 0" class="discount-badge">
+                -{{ product.discount }}%
+              </mat-chip>
+            </div>
+          </div>
+          
+          <div class="product-list-info">
+            <h3 class="product-name">{{ product.name }}</h3>
+            <p class="product-category">{{ getCategoryName(product.category) }}</p>
+            <p class="product-description">{{ product.description | slice:0:150 }}{{ product.description && product.description.length > 150 ? '...' : '' }}</p>
+            
+            <div class="product-rating" *ngIf="product.averageRating && product.averageRating > 0">
+              <div class="stars">
+                <mat-icon *ngFor="let star of getStars(product.averageRating)" 
+                  [class.filled]="star.filled"
+                  [class.half]="star.half"
+                >star</mat-icon>
+              </div>
+              <span class="rating-text">({{ product.reviewCount || 0 }})</span>
+            </div>
+          </div>
+          
+          <div class="product-list-pricing">
+            <div class="product-pricing">
+              <span class="current-price">${{ product.price | number:'1.2-2' }}</span>
+              <span *ngIf="product.originalPrice && product.originalPrice > product.price" 
+                    class="original-price">${{ product.originalPrice | number:'1.2-2' }}</span>
+            </div>
+            
+            <div class="product-stock" [class.low-stock]="product.stock < 10">
+              <mat-icon>inventory</mat-icon>
+              <span>{{ product.stock > 0 ? product.stock + ' in stock' : 'Out of stock' }}</span>
+            </div>
+            
+            <div class="product-list-actions">
+              <button 
+                mat-raised-button 
+                color="primary" 
+                [disabled]="product.stock === 0"
+                (click)="addToCart(product, $event)"
+              >
+                <mat-icon>add_shopping_cart</mat-icon>
+                Add to Cart
+              </button>
+              <button 
+                mat-icon-button 
+                [matBadge]="product.isWishlisted ? '1' : null" 
+                matBadgeColor="warn"
+                (click)="toggleWishlist(product, $event)"
+              >
+                <mat-icon>{{ product.isWishlisted ? 'favorite' : 'favorite_border' }}</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- No Products Found -->
+    <div class="no-products" *ngIf="filteredProducts.length === 0 && !isLoading">
+      <mat-icon class="no-products-icon">inventory_2</mat-icon>
+      <h3>No Products Found</h3>
+      <p>Try adjusting your filters or search terms</p>
+      <button mat-raised-button color="primary" (click)="clearFilters()">
+        <mat-icon>clear</mat-icon>
+        Clear Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <mat-paginator
+    *ngIf="!isLoading && filteredProducts.length > 0"
+    [length]="totalProducts"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="pageSizeOptions"
+    [showFirstLastButtons]="true"
+    (page)="onPageChange($event)"
+    class="pagination"
+  >
+  </mat-paginator>
+</div>

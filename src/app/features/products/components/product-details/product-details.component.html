@@ -1,0 +1,386 @@
+<div class="product-details-container" *ngIf="product; else loadingTemplate">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a routerLink="/products">Products</a>
+    <mat-icon>chevron_right</mat-icon>
+    <a [routerLink]="['/categories', product.categoryRef._id]" *ngIf="product.categoryRef; else noCategoryLink">{{ product.categoryRef.name || category?.name || 'Category' }}</a>
+    <ng-template #noCategoryLink>
+      <span>{{ category?.name || 'Category' }}</span>
+    </ng-template>
+    <mat-icon>chevron_right</mat-icon>
+    <span>{{ product.name }}</span>
+  </nav>
+
+  <!-- Main Product Section -->
+  <div class="product-main">
+    <!-- Image Gallery -->
+    <div class="product-images">
+      <div class="main-image">
+        <img 
+          [src]="getImageUrl(product, selectedImageIndex)" 
+          [alt]="product.name || 'Product'"
+          (error)="onImageError($event)"
+          (click)="openImageGallery()"
+        >
+        <div class="image-badges">
+          <mat-chip *ngIf="product.isNew" class="new-badge">New</mat-chip>
+          <mat-chip *ngIf="getDiscountPercentage() > 0" class="discount-badge">
+            -{{ getDiscountPercentage() }}%
+          </mat-chip>
+          <mat-chip [class]="getStockStatusClass() + '-badge'">
+            {{ getStockStatus() }}
+          </mat-chip>
+        </div>
+        <button mat-fab class="gallery-button" (click)="openImageGallery()">
+          <mat-icon>zoom_in</mat-icon>
+        </button>
+      </div>
+      
+      <div class="thumbnail-images" *ngIf="getTotalImageCount() > 1">
+        <div 
+          *ngFor="let image of getAllImages(); let i = index"
+          class="thumbnail"
+          [class.selected]="i === selectedImageIndex"
+          (click)="selectImage(i)"
+        >
+          <img [src]="getImageUrl(product, i)" [alt]="product.name + ' ' + (i + 1)" (error)="onImageError($event)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="product-info">
+      <div class="product-header">
+        <h1 class="product-title">{{ product.name }}</h1>
+        <div class="product-meta">
+          <span class="product-category">{{ category?.name || 'Category' }}</span>
+          <div class="product-rating" *ngIf="product.averageRating && product.averageRating > 0">
+            <div class="stars">
+              <mat-icon *ngFor="let star of getStars(product.averageRating)" 
+                [class.filled]="star.filled"
+                [class.half]="star.half"
+              >star</mat-icon>
+            </div>
+            <span class="rating-text">({{ product.reviewCount || 0 }} reviews)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-description">
+        <p>{{ product.description }}</p>
+      </div>
+
+      <!-- Price Section -->
+      <div class="price-section">
+        <div class="current-price">${{ product.price | number:'1.2-2' }}</div>
+        <div class="original-price" *ngIf="product.originalPrice && product.originalPrice > product.price">
+          ${{ product.originalPrice | number:'1.2-2' }}
+        </div>
+        <div class="savings" *ngIf="getDiscountPercentage() > 0">
+          You save ${{ (product.originalPrice! - product.price) | number:'1.2-2' }} ({{ getDiscountPercentage() }}%)
+        </div>
+      </div>
+
+      <!-- Stock Status -->
+      <div class="stock-status">
+        <mat-icon [class]="getStockStatusClass()">inventory</mat-icon>
+        <span [class]="getStockStatusClass()">{{ getStockStatus() }}</span>
+        <span *ngIf="product.stock > 0" class="stock-count">({{ product.stock }} available)</span>
+      </div>
+
+      <!-- Purchase Form -->
+      <form [formGroup]="purchaseForm" class="purchase-form">
+        <div class="quantity-selector">
+          <label>Quantity:</label>
+          <div class="quantity-controls">
+            <button mat-icon-button type="button" (click)="updateQuantity(-1)" [disabled]="quantity <= 1">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <input 
+              type="number" 
+              [value]="quantity" 
+              (input)="onQuantityChange($event)"
+              min="1" 
+              [max]="product.stock"
+              class="quantity-input"
+            >
+            <button mat-icon-button type="button" (click)="updateQuantity(1)" [disabled]="quantity >= product.stock">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="purchase-actions">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            size="large"
+            [disabled]="!isInStock() || isAddingToCart"
+            (click)="addToCart()"
+            class="add-to-cart-btn"
+          >
+            <mat-icon *ngIf="!isAddingToCart">add_shopping_cart</mat-icon>
+            <mat-spinner *ngIf="isAddingToCart" diameter="20"></mat-spinner>
+            {{ isAddingToCart ? 'Adding...' : 'Add to Cart' }}
+          </button>
+          
+          <button 
+            mat-raised-button 
+            color="accent" 
+            size="large"
+            [disabled]="!isInStock()"
+            (click)="buyNow()"
+            class="buy-now-btn"
+          >
+            <mat-icon>flash_on</mat-icon>
+            Buy Now
+          </button>
+          
+          <button 
+            mat-icon-button 
+            [matBadge]="product.isWishlisted ? '1' : null" 
+            matBadgeColor="warn"
+            [disabled]="isAddingToWishlist"
+            (click)="addToWishlist()"
+            class="wishlist-btn"
+          >
+            <mat-icon *ngIf="!isAddingToWishlist">{{ product.isWishlisted ? 'favorite' : 'favorite_border' }}</mat-icon>
+            <mat-spinner *ngIf="isAddingToWishlist" diameter="20"></mat-spinner>
+          </button>
+        </div>
+      </form>
+
+      <!-- Product Features -->
+      <div class="product-features">
+        <div class="feature-item">
+          <mat-icon>local_shipping</mat-icon>
+          <span>Free shipping on orders over $50</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>security</mat-icon>
+          <span>Secure payment</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>refresh</mat-icon>
+          <span>30-day return policy</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>support_agent</mat-icon>
+          <span>24/7 customer support</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Details Tabs -->
+  <mat-tab-group class="product-tabs" [(selectedIndex)]="selectedTab">
+    <!-- Specifications Tab -->
+    <mat-tab label="Specifications">
+      <div class="tab-content">
+        <div class="specifications" *ngIf="product.specifications && getSpecificationKeys().length > 0">
+          <div class="spec-item" *ngFor="let spec of product.specifications | keyvalue">
+            <span class="spec-label">{{ spec.key }}</span>
+            <span class="spec-value">{{ spec.value }}</span>
+          </div>
+        </div>
+        <div class="no-specifications" *ngIf="!product.specifications || getSpecificationKeys().length === 0">
+          <mat-icon>info</mat-icon>
+          <p>No specifications available for this product.</p>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Reviews Tab -->
+    <mat-tab label="Reviews">
+      <div class="tab-content">
+        <div class="reviews-header">
+          <div class="reviews-summary">
+            <div class="average-rating">
+              <span class="rating-number">{{ product.averageRating || 0 | number:'1.1-1' }}</span>
+              <div class="stars">
+                <mat-icon *ngFor="let star of getStars(product.averageRating || 0)" 
+                  [class.filled]="star.filled"
+                  [class.half]="star.half"
+                >star</mat-icon>
+              </div>
+              <span class="rating-count">({{ product.reviewCount || 0 }} reviews)</span>
+            </div>
+          </div>
+          
+          <button mat-raised-button color="primary" (click)="showReviewForm = !showReviewForm">
+            <mat-icon>rate_review</mat-icon>
+            Write a Review
+          </button>
+        </div>
+
+        <!-- Review Form -->
+        <mat-expansion-panel [expanded]="showReviewForm" class="review-form-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Write a Review</mat-panel-title>
+          </mat-expansion-panel-header>
+          
+          <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="review-form">
+            <div class="rating-input">
+              <label>Rating:</label>
+              <div class="star-rating">
+                <mat-icon 
+                  *ngFor="let i of [1,2,3,4,5]" 
+                  [class.filled]="i <= reviewForm.get('rating')?.value"
+                  (click)="reviewForm.patchValue({rating: i})"
+                >star</mat-icon>
+              </div>
+            </div>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Review Title</mat-label>
+              <input matInput formControlName="title" placeholder="Give your review a title">
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Your Review</mat-label>
+              <textarea matInput formControlName="comment" rows="4" placeholder="Share your thoughts about this product"></textarea>
+            </mat-form-field>
+            
+            <div class="review-form-actions">
+              <button mat-button type="button" (click)="showReviewForm = false">Cancel</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="reviewForm.invalid">
+                Submit Review
+              </button>
+            </div>
+          </form>
+        </mat-expansion-panel>
+
+        <!-- Reviews List -->
+        <div class="reviews-list" *ngIf="!isLoadingReviews; else reviewsLoading">
+          <div class="review-item" *ngFor="let review of reviews">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <span class="reviewer-name">{{ review.user.firstName }} {{ review.user.lastName }}</span>
+                <div class="review-rating">
+                  <mat-icon *ngFor="let star of getStars(review.rating)" 
+                    [class.filled]="star.filled"
+                    [class.half]="star.half"
+                  >star</mat-icon>
+                </div>
+              </div>
+              <span class="review-date">{{ review.createdAt | date:'mediumDate' }}</span>
+            </div>
+            <h4 class="review-title">{{ review.title }}</h4>
+            <p class="review-comment">{{ review.comment }}</p>
+          </div>
+        </div>
+
+        <ng-template #reviewsLoading>
+          <div class="loading-container">
+            <app-loading-spinner message="Loading reviews..."></app-loading-spinner>
+          </div>
+        </ng-template>
+
+        <div class="no-reviews" *ngIf="reviews.length === 0 && !isLoadingReviews">
+          <mat-icon>rate_review</mat-icon>
+          <p>No reviews yet. Be the first to review this product!</p>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Shipping & Returns Tab -->
+    <mat-tab label="Shipping & Returns">
+      <div class="tab-content">
+        <div class="shipping-info">
+          <h3>Shipping Information</h3>
+          <ul>
+            <li>Free shipping on orders over $50</li>
+            <li>Standard shipping: 3-5 business days</li>
+            <li>Express shipping: 1-2 business days</li>
+            <li>International shipping available</li>
+          </ul>
+          
+          <h3>Return Policy</h3>
+          <ul>
+            <li>30-day return window</li>
+            <li>Items must be in original condition</li>
+            <li>Free return shipping</li>
+            <li>Refund processed within 5-7 business days</li>
+          </ul>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Related Products -->
+  <div class="related-products" *ngIf="relatedProducts.length > 0">
+    <h2 class="section-title">
+      <mat-icon>shopping_bag</mat-icon>
+      Related Products
+    </h2>
+    
+    <div class="related-grid" *ngIf="!isLoadingRelated; else relatedLoading">
+      <mat-card 
+        *ngFor="let relatedProduct of relatedProducts" 
+        class="related-card"
+        [routerLink]="['/products', relatedProduct._id]"
+      >
+        <div class="related-image">
+          <img 
+            [src]="getImageUrl(relatedProduct, 0)" 
+            [alt]="relatedProduct.name"
+            (error)="onImageError($event)"
+          >
+        </div>
+        <mat-card-content>
+          <h3 class="related-name">{{ relatedProduct.name }}</h3>
+          <div class="related-price">${{ relatedProduct.price | number:'1.2-2' }}</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <ng-template #relatedLoading>
+      <div class="loading-container">
+        <app-loading-spinner message="Loading related products..."></app-loading-spinner>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <app-loading-spinner message="Loading product details..."></app-loading-spinner>
+  </div>
+</ng-template>
+
+<!-- Image Gallery Modal -->
+<div class="image-gallery-modal" *ngIf="showImageGallery" (click)="closeImageGallery()">
+  <div class="gallery-content" (click)="$event.stopPropagation()">
+    <button mat-icon-button class="close-button" (click)="closeImageGallery()">
+      <mat-icon>close</mat-icon>
+    </button>
+    
+    <div class="gallery-main">
+      <button mat-icon-button class="nav-button prev" (click)="previousImage()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      
+      <img 
+        [src]="getImageUrl(product, selectedImageIndex)" 
+        [alt]="product?.name"
+        (error)="onImageError($event)"
+      >
+      
+      <button mat-icon-button class="nav-button next" (click)="nextImage()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+    
+    <div class="gallery-thumbnails" *ngIf="getTotalImageCount() > 1">
+      <div 
+        *ngFor="let image of getAllImages(); let i = index"
+        class="gallery-thumbnail"
+        [class.selected]="i === selectedImageIndex"
+        (click)="selectImage(i)"
+      >
+        <img [src]="getImageUrl(product, i)" [alt]="product?.name + ' ' + (i + 1)" (error)="onImageError($event)">
+      </div>
+    </div>
+  </div>
+</div>

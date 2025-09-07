@@ -1,0 +1,175 @@
+<div class="product-image-management">
+  <!-- Header -->
+  <div class="management-header">
+    <h3>Product Images</h3>
+    <div class="header-actions">
+      <button mat-button 
+              (click)="selectAllImages()"
+              [disabled]="images.length === 0 || selectedImages.length === images.length">
+        <mat-icon>select_all</mat-icon>
+        Select All
+      </button>
+      <button mat-button 
+              (click)="clearSelection()"
+              [disabled]="selectedImages.length === 0">
+        <mat-icon>clear</mat-icon>
+        Clear Selection
+      </button>
+      <button mat-button 
+              color="warn"
+              (click)="deleteSelectedImages()"
+              [disabled]="selectedImages.length === 0">
+        <mat-icon>delete</mat-icon>
+        Delete Selected ({{ selectedImages.length }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Image Section -->
+  <mat-card class="main-image-card" *ngIf="getMainImage()">
+    <mat-card-header>
+      <mat-card-title>Main Image</mat-card-title>
+      <mat-card-subtitle>Primary product image</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="main-image-container">
+        <div class="image-wrapper">
+          <img [src]="getMainImage()!.url" 
+               [alt]="getMainImage()!.filename"
+               (click)="openImagePreview(getMainImage()!)">
+          <div class="image-overlay">
+            <button mat-icon-button 
+                    (click)="openImagePreview(getMainImage()!)"
+                    matTooltip="View full size">
+              <mat-icon>zoom_in</mat-icon>
+            </button>
+            <button mat-icon-button 
+                    (click)="downloadImage(getMainImage()!)"
+                    matTooltip="Download">
+              <mat-icon>download</mat-icon>
+            </button>
+            <button mat-icon-button 
+                    color="warn"
+                    (click)="removeImage(getMainImage()!)"
+                    [disabled]="!canRemoveImage(getMainImage()!)"
+                    matTooltip="Remove image">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="image-info">
+          <h4>{{ getMainImage()!.filename }}</h4>
+          <p>{{ getImageSize(getMainImage()!) }}</p>
+          <mat-chip color="primary" selected>
+            <mat-icon>star</mat-icon>
+            Main Image
+          </mat-chip>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Additional Images Section -->
+  <mat-card class="additional-images-card" *ngIf="getAdditionalImages().length > 0">
+    <mat-card-header>
+      <mat-card-title>Additional Images</mat-card-title>
+      <mat-card-subtitle>{{ getAdditionalImages().length }} image(s)</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="images-grid">
+        <div class="image-item" 
+             *ngFor="let image of getAdditionalImages(); let i = index"
+             [class.selected]="isImageSelected(image)"
+             (click)="toggleImageSelection(image)">
+          
+          <div class="image-wrapper">
+            <img [src]="image.url" 
+                 [alt]="image.filename"
+                 (click)="openImagePreview(image)">
+            
+            <div class="image-overlay">
+              <button mat-icon-button 
+                      (click)="setMainImage(image)"
+                      [disabled]="!canSetAsMain(image)"
+                      matTooltip="Set as main image">
+                <mat-icon>star</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      (click)="openImagePreview(image)"
+                      matTooltip="View full size">
+                <mat-icon>zoom_in</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      (click)="downloadImage(image)"
+                      matTooltip="Download">
+                <mat-icon>download</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      color="warn"
+                      (click)="removeImage(image)"
+                      [disabled]="!canRemoveImage(image)"
+                      matTooltip="Remove image">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+            <!-- Selection Checkbox -->
+            <div class="selection-checkbox">
+              <mat-icon *ngIf="isImageSelected(image)">check_circle</mat-icon>
+            </div>
+          </div>
+
+          <div class="image-info">
+            <h5>{{ image.filename }}</h5>
+            <p>{{ getImageSize(image) }}</p>
+            <div class="image-actions">
+              <button mat-button 
+                      size="small"
+                      (click)="setMainImage(image)"
+                      [disabled]="!canSetAsMain(image)">
+                <mat-icon>star</mat-icon>
+                Set Main
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Upload Section -->
+  <mat-card class="upload-card">
+    <mat-card-header>
+      <mat-card-title>Upload New Images</mat-card-title>
+      <mat-card-subtitle>Add more product images</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <app-image-upload
+        [maxFiles]="maxImages - images.length"
+        [multiple]="true"
+        [disabled]="disabled || images.length >= maxImages"
+        folder="products"
+        (filesSelected)="onFilesSelected($event)"
+        (filesUploaded)="onFilesUploaded($event)"
+        (uploadError)="onUploadError($event)"
+        (uploadProgress)="onUploadProgress($event)">
+      </app-image-upload>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Upload Progress -->
+  <div class="upload-progress" *ngIf="uploading">
+    <mat-progress-bar 
+      [value]="uploadProgress"
+      mode="determinate">
+    </mat-progress-bar>
+    <span class="progress-text">Uploading... {{ uploadProgress }}%</span>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="images.length === 0">
+    <mat-icon class="empty-icon">image</mat-icon>
+    <h3>No Images</h3>
+    <p>Upload images to showcase your product</p>
+  </div>
+</div>

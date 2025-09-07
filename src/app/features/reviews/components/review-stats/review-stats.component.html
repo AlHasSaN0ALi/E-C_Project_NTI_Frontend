@@ -1,0 +1,112 @@
+<div class="review-stats-container">
+  <mat-card class="stats-card">
+    <mat-card-header>
+      <div class="stats-header">
+        <h3>Customer Reviews</h3>
+        <button mat-raised-button 
+                color="primary" 
+                (click)="onWriteReview()"
+                *ngIf="showWriteReview">
+          <mat-icon>rate_review</mat-icon>
+          Write a Review
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="loading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <p>Loading review statistics...</p>
+      </div>
+
+      <!-- Stats Content -->
+      <div class="stats-content" *ngIf="!loading && stats">
+        <!-- Overall Rating -->
+        <div class="overall-rating">
+          <div class="rating-display">
+            <div class="average-rating">
+              <span class="rating-number">{{ stats.averageRating | number:'1.1-1' }}</span>
+              <div class="rating-stars">
+                <mat-icon *ngFor="let star of getRatingStars(getFloorRating(stats.averageRating))" 
+                          class="star filled">star</mat-icon>
+                <mat-icon *ngFor="let star of getEmptyStars(getFloorRating(stats.averageRating))" 
+                          class="star empty">star_border</mat-icon>
+              </div>
+              <div class="rating-text" [style.color]="getAverageRatingColor()">
+                {{ getAverageRatingText() }}
+              </div>
+            </div>
+            <div class="rating-summary">
+              <p class="total-reviews">{{ stats.totalReviews }} review{{ stats.totalReviews !== 1 ? 's' : '' }}</p>
+              <div class="verified-info" *ngIf="stats.verifiedReviews > 0">
+                <mat-icon class="verified-icon">verified</mat-icon>
+                <span>{{ stats.verifiedReviews }} verified purchase{{ stats.verifiedReviews !== 1 ? 's' : '' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating Distribution -->
+        <div class="rating-distribution">
+          <h4>Rating Breakdown</h4>
+          <div class="distribution-bars">
+            <div class="distribution-item" 
+                 *ngFor="let rating of [5,4,3,2,1]" 
+                 (click)="onRatingFilter(rating)"
+                 [class.selected]="selectedRating === rating">
+              <div class="rating-label">
+                <span class="rating-number">{{ rating }}</span>
+                <mat-icon class="star-icon">star</mat-icon>
+              </div>
+              <div class="progress-container">
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="getRatingPercentage(rating)"
+                  [color]="selectedRating === rating ? 'primary' : 'accent'">
+                </mat-progress-bar>
+              </div>
+              <div class="rating-count">
+                {{ getRatingCount(rating) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verification Stats -->
+        <div class="verification-stats" *ngIf="stats.verifiedReviews > 0">
+          <div class="verification-bar">
+            <div class="verification-label">
+              <mat-icon>verified</mat-icon>
+              <span>Verified Reviews</span>
+            </div>
+            <div class="verification-progress">
+              <mat-progress-bar 
+                mode="determinate" 
+                [value]="getVerificationPercentage()"
+                color="primary">
+              </mat-progress-bar>
+              <span class="verification-percentage">
+                {{ getVerificationPercentage() | number:'1.0-0' }}%
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="!loading && !stats">
+        <mat-icon class="empty-icon">rate_review</mat-icon>
+        <h4>No Reviews Yet</h4>
+        <p>Be the first to review this product!</p>
+        <button mat-raised-button 
+                color="primary" 
+                (click)="onWriteReview()"
+                *ngIf="showWriteReview">
+          <mat-icon>rate_review</mat-icon>
+          Write the First Review
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

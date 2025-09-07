@@ -1,0 +1,102 @@
+/* E-Commerce Frontend Global Styles */
+
+// Angular Material Theme Customization
+@use '@angular/material' as mat;
+
+// Ensure Material Icons are properly loaded
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+// Import theme variables and utilities
+@import 'styles/themes.scss';
+@import 'styles/global.scss';
+@import 'styles/components.scss';
+@import 'styles/animations.scss';
+
+// Define custom theme with shared typography and density
+$custom-primary: mat.define-palette(mat.$blue-palette, 500);
+$custom-accent: mat.define-palette(mat.$orange-palette, 500);
+$custom-warn: mat.define-palette(mat.$red-palette, 500);
+
+// Shared typography and density configuration (define once to reduce duplication)
+$custom-typography: mat.define-typography-config();
+$custom-density: 0;
+
+// Define theme configurations
+$theme-config: (
+  color: (
+    primary: $custom-primary,
+    accent: $custom-accent,
+    warn: $custom-warn,
+  ),
+  typography: $custom-typography,
+  density: $custom-density,
+);
+
+// Light theme
+$custom-theme: mat.define-light-theme($theme-config);
+
+// Dark theme
+$custom-dark-theme: mat.define-dark-theme($theme-config);
+
+// Apply core styles only once
+@include mat.core();
+
+// Apply light theme by default
+@include mat.all-component-themes($custom-theme);
+
+// Apply dark theme for dark mode preference
+@media (prefers-color-scheme: dark) {
+  @include mat.all-component-themes($custom-dark-theme);
+}
+
+// Override theme variables to prevent duplication
+:root {
+  --mat-theme-primary: #{mat.get-color-from-palette($custom-primary, 500)};
+  --mat-theme-accent: #{mat.get-color-from-palette($custom-accent, 500)};
+  --mat-theme-warn: #{mat.get-color-from-palette($custom-warn, 500)};
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+  
+  &:hover {
+    background: #a8a8a8;
+  }
+}
+
+// Selection styling
+::selection {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #1976d2;
+}
+
+::-moz-selection {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #1976d2;
+}

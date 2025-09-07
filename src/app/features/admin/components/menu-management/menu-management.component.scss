@@ -1,0 +1,269 @@
+.menu-management-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.page-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.menu-table-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+.menu-table-card mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  color: white;
+  margin: -24px -24px 24px -24px;
+  border-radius: 12px 12px 0 0;
+}
+
+.menu-table-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.menu-table {
+  width: 100%;
+}
+
+.order-chip {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.title-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.title-cell mat-icon {
+  color: #666;
+}
+
+.route-code {
+  background: #f5f5f5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+.status-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.preview-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+.preview-card mat-card-header {
+  background: linear-gradient(135deg, #4caf50, #8bc34a);
+  color: white;
+  margin: -24px -24px 24px -24px;
+  padding: 1.5rem 2rem;
+  border-radius: 12px 12px 0 0;
+}
+
+.preview-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.menu-preview {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.preview-navbar {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-menu-items {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.preview-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.preview-menu-item:hover {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.preview-menu-item.inactive {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.preview-menu-item mat-icon {
+  font-size: 18px;
+}
+
+/* Dialog Styles */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.dialog-form {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-checkboxes {
+  display: flex;
+  gap: 2rem;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .menu-management-container {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .menu-table-card mat-card-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .preview-menu-items {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .dialog-content {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .dialog-form {
+    padding: 1.5rem;
+  }
+
+  .form-checkboxes {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

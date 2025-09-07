@@ -1,0 +1,140 @@
+<div class="cart-container">
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>shopping_cart</mat-icon>
+      Shopping Cart
+    </h1>
+    <p class="page-subtitle" *ngIf="cartSummary">
+      {{ cartSummary.totalItems }} {{ cartSummary.totalItems === 1 ? 'item' : 'items' }} in your cart
+    </p>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <app-loading-spinner message="Loading cart..."></app-loading-spinner>
+  </div>
+
+  <div class="cart-content" *ngIf="!isLoading">
+    <!-- Empty Cart -->
+    <div class="empty-cart" *ngIf="!cartSummary || cartSummary.items.length === 0">
+      <mat-icon class="empty-cart-icon">shopping_cart</mat-icon>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added any items to your cart yet.</p>
+      <button mat-raised-button color="primary" routerLink="/home">
+        <mat-icon>shopping_bag</mat-icon>
+        Start Shopping
+      </button>
+    </div>
+
+    <!-- Cart Items -->
+    <div class="cart-items" *ngIf="cartSummary && cartSummary.items.length > 0">
+      <div class="cart-header">
+        <h2>Cart Items</h2>
+        <button mat-button color="warn" (click)="clearCart()">
+          <mat-icon>clear_all</mat-icon>
+          Clear Cart
+        </button>
+      </div>
+
+      <div class="items-list">
+        <mat-card *ngFor="let item of cartSummary.items" class="cart-item">
+          <div class="item-content">
+            <div class="item-image">
+              <img 
+                [src]="getImageUrl(item.product)" 
+                [alt]="item.product.name"
+                (error)="onImageError($event)"
+              >
+            </div>
+
+            <div class="item-details">
+              <h3 class="item-name">{{ item.product.name }}</h3>
+              <p class="item-category">{{ item.product.category }}</p>
+              <div class="item-price">
+                <span class="current-price">${{ item.product.price | number:'1.2-2' }}</span>
+                <span *ngIf="item.product.originalPrice && item.product.originalPrice > item.product.price" 
+                      class="original-price">${{ item.product.originalPrice | number:'1.2-2' }}</span>
+              </div>
+              <div class="item-savings" *ngIf="getItemSavings(item) > 0">
+                You save ${{ getItemSavings(item) | number:'1.2-2' }}
+              </div>
+            </div>
+
+            <div class="item-quantity">
+              <label>Quantity:</label>
+              <div class="quantity-controls">
+                <button mat-icon-button (click)="updateQuantity(item, item.quantity - 1)">
+                  <mat-icon>remove</mat-icon>
+                </button>
+                <input 
+                  type="number" 
+                  [value]="item.quantity" 
+                  (change)="onQuantityChange(item, $event)"
+                  min="1" 
+                  [max]="item.product.stock"
+                  class="quantity-input"
+                >
+                <button mat-icon-button (click)="updateQuantity(item, item.quantity + 1)">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              <div class="stock-info">
+                {{ item.product.stock }} in stock
+              </div>
+            </div>
+
+            <div class="item-total">
+              <div class="total-price">${{ getItemTotal(item) | number:'1.2-2' }}</div>
+              <button mat-icon-button color="warn" (click)="removeItem(item)" class="remove-btn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Cart Summary -->
+    <div class="cart-summary" *ngIf="cartSummary && cartSummary.items.length > 0">
+      <mat-card class="summary-card">
+        <mat-card-header>
+          <mat-card-title>Order Summary</mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <div class="summary-row">
+            <span>Items ({{ cartSummary.totalItems }}):</span>
+            <span>${{ cartSummary.totalPrice | number:'1.2-2' }}</span>
+          </div>
+          
+          <div class="summary-row" *ngIf="cartSummary.totalSavings > 0">
+            <span>Savings:</span>
+            <span class="savings">-${{ cartSummary.totalSavings | number:'1.2-2' }}</span>
+          </div>
+          
+          <div class="summary-row">
+            <span>Shipping:</span>
+            <span class="free-shipping">FREE</span>
+          </div>
+          
+          <mat-divider></mat-divider>
+          
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>${{ (cartSummary.totalPrice - cartSummary.totalSavings) | number:'1.2-2' }}</span>
+          </div>
+        </mat-card-content>
+        
+        <mat-card-actions class="summary-actions">
+          <button mat-button routerLink="/home" class="continue-btn">
+            <mat-icon>arrow_back</mat-icon>
+            Continue Shopping
+          </button>
+          <button mat-raised-button color="primary" (click)="proceedToCheckout()" class="checkout-btn">
+            <mat-icon>payment</mat-icon>
+            Proceed to Checkout
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

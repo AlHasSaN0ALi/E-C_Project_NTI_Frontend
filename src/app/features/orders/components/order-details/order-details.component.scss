@@ -1,0 +1,428 @@
+.order-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.back-btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #667eea;
+  font-weight: 500;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.page-title mat-icon {
+  color: #667eea;
+  font-size: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.order-number {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+}
+
+.status-section {
+  margin-bottom: 2rem;
+}
+
+.status-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.status-info h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 1rem 0;
+}
+
+.status-chip {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+}
+
+.status-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.track-btn,
+.cancel-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.track-btn {
+  color: #4caf50;
+}
+
+.cancel-btn {
+  color: #f44336;
+}
+
+.status-timeline {
+  margin-top: 2rem;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.step-icon {
+  font-size: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #ccc;
+  transition: color 0.3s ease;
+
+  &.active {
+    color: #667eea;
+  }
+
+  &.completed {
+    color: #4caf50;
+  }
+}
+
+.step-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.order-info-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.items-card,
+.summary-card,
+.shipping-card,
+.payment-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.items-card {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.summary-card {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.shipping-card {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.payment-card {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8f9fa;
+  flex-shrink: 0;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.item-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.item-category {
+  color: #667eea;
+  font-size: 0.9rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.item-specs {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.item-price,
+.item-quantity,
+.item-total {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.item-price {
+  color: #333;
+}
+
+.item-quantity {
+  color: #666;
+}
+
+.item-total {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.summary-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.summary-row.discount {
+  color: #4caf50;
+}
+
+.summary-row.total {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+  margin-top: 0.5rem;
+}
+
+.shipping-details,
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.address-section h4,
+.shipping-method h4,
+.payment-method h4,
+.payment-status h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.address p,
+.shipping-method p,
+.payment-method p {
+  margin: 0 0 0.25rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.shipping-time {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.timeline-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.timeline-event {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.timeline-marker {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.timeline-marker mat-icon {
+  color: #666;
+  font-size: 1.2rem;
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.timeline-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.25rem 0;
+}
+
+.timeline-content p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.timeline-date {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-details-container {
+    padding: 1rem;
+  }
+
+  .order-info-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .items-card,
+  .summary-card,
+  .shipping-card,
+  .payment-card {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .status-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .status-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .order-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .item-image {
+    width: 100%;
+    height: 200px;
+    margin: 0 auto;
+  }
+
+  .item-specs {
+    justify-content: center;
+  }
+
+  .back-btn {
+    position: static;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .item-specs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .timeline-event {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .timeline-marker {
+    align-self: center;
+  }
+}

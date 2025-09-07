@@ -1,0 +1,396 @@
+.review-stats-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .stats-card {
+    .stats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+
+      h3 {
+        margin: 0;
+        color: #333;
+        font-size: 20px;
+        font-weight: 500;
+      }
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    .loading-container {
+      text-align: center;
+      padding: 20px;
+
+      p {
+        margin: 16px 0 0;
+        color: #666;
+      }
+    }
+
+    .stats-content {
+      .overall-rating {
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #e0e0e0;
+
+        .rating-display {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+
+          .average-rating {
+            text-align: center;
+
+            .rating-number {
+              display: block;
+              font-size: 48px;
+              font-weight: 700;
+              color: #333;
+              line-height: 1;
+              margin-bottom: 8px;
+            }
+
+            .rating-stars {
+              display: flex;
+              justify-content: center;
+              gap: 2px;
+              margin-bottom: 8px;
+
+              .star {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+
+                &.filled {
+                  color: #ffc107;
+                }
+
+                &.empty {
+                  color: #e0e0e0;
+                }
+              }
+            }
+
+            .rating-text {
+              font-size: 16px;
+              font-weight: 500;
+            }
+          }
+
+          .rating-summary {
+            flex: 1;
+
+            .total-reviews {
+              margin: 0 0 8px;
+              font-size: 16px;
+              color: #666;
+            }
+
+            .verified-info {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              font-size: 14px;
+              color: #4caf50;
+
+              .verified-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+              }
+            }
+          }
+        }
+      }
+
+      .rating-distribution {
+        margin-bottom: 24px;
+
+        h4 {
+          margin: 0 0 16px;
+          color: #333;
+          font-size: 16px;
+          font-weight: 500;
+        }
+
+        .distribution-bars {
+          .distribution-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+              background-color: #f5f5f5;
+            }
+
+            &.selected {
+              background-color: #e3f2fd;
+              border: 1px solid #2196f3;
+            }
+
+            .rating-label {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              min-width: 40px;
+
+              .rating-number {
+                font-size: 14px;
+                font-weight: 500;
+                color: #333;
+              }
+
+              .star-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                color: #ffc107;
+              }
+            }
+
+            .progress-container {
+              flex: 1;
+              height: 8px;
+
+              ::ng-deep .mat-progress-bar {
+                height: 8px;
+                border-radius: 4px;
+              }
+            }
+
+            .rating-count {
+              min-width: 30px;
+              text-align: right;
+              font-size: 14px;
+              color: #666;
+            }
+          }
+        }
+      }
+
+      .verification-stats {
+        .verification-bar {
+          .verification-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #333;
+
+            mat-icon {
+              font-size: 16px;
+              width: 16px;
+              height: 16px;
+              color: #4caf50;
+            }
+          }
+
+          .verification-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            ::ng-deep .mat-progress-bar {
+              flex: 1;
+              height: 8px;
+              border-radius: 4px;
+            }
+
+            .verification-percentage {
+              font-size: 14px;
+              font-weight: 500;
+              color: #4caf50;
+              min-width: 40px;
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+
+      .empty-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        color: #ccc;
+      }
+
+      h4 {
+        margin: 0 0 8px;
+        color: #333;
+        font-size: 18px;
+      }
+
+      p {
+        margin: 0 0 20px;
+        font-size: 14px;
+      }
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 auto;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .review-stats-container {
+    .stats-card {
+      .stats-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+
+        h3 {
+          font-size: 18px;
+        }
+
+        button {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      .stats-content {
+        .overall-rating {
+          .rating-display {
+            flex-direction: column;
+            text-align: center;
+            gap: 16px;
+
+            .average-rating {
+              .rating-number {
+                font-size: 36px;
+              }
+            }
+          }
+        }
+
+        .rating-distribution {
+          .distribution-bars {
+            .distribution-item {
+              gap: 8px;
+
+              .rating-label {
+                min-width: 30px;
+              }
+
+              .rating-count {
+                min-width: 25px;
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+  .review-stats-container {
+    .stats-card {
+      background: #2d2d2d;
+      color: #fff;
+
+      .stats-header {
+        h3 {
+          color: #fff;
+        }
+      }
+
+      .stats-content {
+        .overall-rating {
+          border-bottom-color: #404040;
+
+          .rating-display {
+            .average-rating {
+              .rating-number {
+                color: #fff;
+              }
+            }
+
+            .rating-summary {
+              .total-reviews {
+                color: #ccc;
+              }
+            }
+          }
+        }
+
+        .rating-distribution {
+          h4 {
+            color: #fff;
+          }
+
+          .distribution-bars {
+            .distribution-item {
+              &:hover {
+                background-color: #404040;
+              }
+
+              &.selected {
+                background-color: #1e3a5f;
+                border-color: #2196f3;
+              }
+
+              .rating-label {
+                .rating-number {
+                  color: #fff;
+                }
+              }
+
+              .rating-count {
+                color: #ccc;
+              }
+            }
+          }
+        }
+
+        .verification-stats {
+          .verification-bar {
+            .verification-label {
+              color: #fff;
+            }
+          }
+        }
+      }
+
+      .empty-state {
+        color: #ccc;
+
+        h4 {
+          color: #fff;
+        }
+
+        p {
+          color: #ccc;
+        }
+      }
+    }
+  }
+}

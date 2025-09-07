@@ -1,0 +1,353 @@
+.loading-indicator {
+  position: relative;
+  z-index: 1000;
+
+  // Global Loading Overlay
+  .global-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+
+    .loading-content {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      min-width: 200px;
+
+      .loading-message {
+        margin-top: 16px;
+        font-size: 16px;
+        color: #333;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Component Loading
+  .component-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+
+    .loading-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      .loading-text {
+        font-size: 14px;
+        color: #666;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Button Loading
+  .button-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+
+    .button-text {
+      font-size: 12px;
+      color: #666;
+    }
+  }
+
+  // Form Loading
+  .form-loading {
+    position: relative;
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .loading-content {
+      text-align: center;
+      padding: 20px;
+
+      .form-message {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #666;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Upload Loading
+  .upload-loading {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    min-width: 300px;
+    z-index: 1000;
+
+    .upload-content {
+      text-align: center;
+
+      .upload-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: #2196f3;
+        margin-bottom: 8px;
+      }
+
+      .upload-message {
+        margin: 8px 0;
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .upload-progress-text {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #666;
+      }
+
+      mat-progress-bar {
+        margin-top: 8px;
+        height: 6px;
+        border-radius: 3px;
+      }
+    }
+  }
+
+  // Search Loading
+  .search-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+
+    .search-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .search-text {
+        font-size: 12px;
+        color: #666;
+      }
+    }
+  }
+
+  // Navigation Loading
+  .navigation-loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+
+    .navigation-content {
+      text-align: center;
+
+      .navigation-message {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Loading Statistics (Development)
+  .loading-stats {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #f5f5f5;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    font-family: monospace;
+    font-size: 12px;
+
+    .stats-content {
+      h4 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        color: #333;
+      }
+
+      p {
+        margin: 4px 0;
+        color: #666;
+      }
+
+      button {
+        margin-top: 8px;
+        font-size: 10px;
+        padding: 4px 8px;
+      }
+    }
+  }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+  .loading-indicator {
+    .global-loading-overlay {
+      background-color: rgba(0, 0, 0, 0.8);
+
+      .loading-content {
+        background: #1e1e1e;
+        color: white;
+
+        .loading-message {
+          color: #ffffff;
+        }
+      }
+    }
+
+    .component-loading {
+      background-color: rgba(0, 0, 0, 0.8);
+
+      .loading-content {
+        background: #1e1e1e;
+        color: white;
+
+        .loading-text {
+          color: #cccccc;
+        }
+      }
+    }
+
+    .button-loading {
+      background: rgba(255, 255, 255, 0.1);
+
+      .button-text {
+        color: #cccccc;
+      }
+    }
+
+    .form-loading {
+      .loading-content {
+        .form-message {
+          color: #cccccc;
+        }
+      }
+    }
+
+    .upload-loading {
+      background: #1e1e1e;
+      color: white;
+
+      .upload-content {
+        .upload-message {
+          color: #ffffff;
+        }
+
+        .upload-progress-text {
+          color: #cccccc;
+        }
+      }
+    }
+
+    .search-loading {
+      background: rgba(255, 255, 255, 0.1);
+
+      .search-content {
+        .search-text {
+          color: #cccccc;
+        }
+      }
+    }
+
+    .navigation-loading {
+      background: #1e1e1e;
+      color: white;
+
+      .navigation-content {
+        .navigation-message {
+          color: #ffffff;
+        }
+      }
+    }
+
+    .loading-stats {
+      background: #2d2d2d;
+      color: white;
+
+      .stats-content {
+        h4 {
+          color: #ffffff;
+        }
+
+        p {
+          color: #cccccc;
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .loading-indicator {
+    .global-loading-overlay {
+      .loading-content {
+        margin: 20px;
+        padding: 24px;
+        min-width: auto;
+        width: calc(100% - 40px);
+      }
+    }
+
+    .upload-loading {
+      bottom: 10px;
+      right: 10px;
+      left: 10px;
+      min-width: auto;
+    }
+
+    .navigation-loading {
+      margin: 20px;
+      width: calc(100% - 40px);
+    }
+
+    .loading-stats {
+      top: 10px;
+      right: 10px;
+      left: 10px;
+      width: auto;
+    }
+  }
+}

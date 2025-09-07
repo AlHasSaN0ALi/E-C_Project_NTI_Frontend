@@ -1,0 +1,50 @@
+<div class="categories-container">
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>category</mat-icon>
+      Categories
+    </h1>
+    <p class="page-subtitle">Browse products by category</p>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <app-loading-spinner message="Loading categories..."></app-loading-spinner>
+  </div>
+
+  <div class="categories-grid" *ngIf="!isLoading">
+    <mat-card 
+      *ngFor="let category of categories" 
+      class="category-card"
+      [routerLink]="['/categories', category._id]"
+    >
+      <div class="category-image">
+        <img 
+          [src]="category.image || 'assets/images/placeholder-category.jpg'" 
+          [alt]="category.name"
+          (error)="onImageError($event)"
+        >
+        <div class="category-overlay">
+          <mat-icon class="category-icon">{{ getCategoryIcon(category.name) }}</mat-icon>
+        </div>
+      </div>
+      
+      <mat-card-content class="category-content">
+        <h3 class="category-name">{{ category.name }}</h3>
+        <p class="category-description" *ngIf="category.description">
+          {{ category.description | slice:0:100 }}{{ category.description && category.description.length > 100 ? '...' : '' }}
+        </p>
+        <div class="category-meta">
+          <mat-chip class="product-count" *ngIf="category.productCount">
+            {{ category.productCount }} products
+          </mat-chip>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="no-categories" *ngIf="categories.length === 0 && !isLoading">
+    <mat-icon class="no-categories-icon">category</mat-icon>
+    <h3>No Categories Found</h3>
+    <p>There are no categories available at the moment.</p>
+  </div>
+</div>

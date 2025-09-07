@@ -1,0 +1,170 @@
+<div class="review-form-container">
+  <mat-card class="review-form-card">
+    <mat-card-header>
+      <div class="form-header">
+        <h2>{{ mode === 'create' ? 'Write a Review' : 'Edit Review' }}</h2>
+        <button mat-icon-button (click)="onCancel()" *ngIf="mode === 'edit'">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()" class="review-form">
+        <!-- Rating Section -->
+        <div class="rating-section">
+          <label class="rating-label">Rating *</label>
+          <div class="rating-stars">
+            <mat-icon 
+              *ngFor="let star of getRatingStars()" 
+              class="star-icon"
+              [class.filled]="isStarFilled(star)"
+              [class.hovered]="hoveredRating > 0 && star <= hoveredRating"
+              (click)="onRatingClick(star)"
+              (mouseenter)="onRatingHover(star)"
+              (mouseleave)="onRatingLeave()">
+              {{ isStarFilled(star) ? 'star' : 'star_border' }}
+            </mat-icon>
+          </div>
+          <div class="rating-text" *ngIf="selectedRating > 0">
+            {{ selectedRating === 1 ? 'Poor' : 
+               selectedRating === 2 ? 'Fair' : 
+               selectedRating === 3 ? 'Good' : 
+               selectedRating === 4 ? 'Very Good' : 'Excellent' }}
+          </div>
+          <div class="error-message" *ngIf="isFieldInvalid('rating')">
+            {{ getFieldError('rating') }}
+          </div>
+        </div>
+
+        <!-- Title Section -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Review Title (Optional)</mat-label>
+          <input matInput 
+                 formControlName="title" 
+                 placeholder="Summarize your experience"
+                 maxlength="100">
+          <mat-hint align="end">{{ reviewForm.get('title')?.value?.length || 0 }}/100</mat-hint>
+        </mat-form-field>
+        <div class="error-message" *ngIf="isFieldInvalid('title')">
+          {{ getFieldError('title') }}
+        </div>
+
+        <!-- Comment Section -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Your Review *</mat-label>
+          <textarea matInput 
+                    formControlName="comment" 
+                    placeholder="Tell us about your experience with this product..."
+                    rows="4"
+                    maxlength="1000">
+          </textarea>
+          <mat-hint align="end">{{ reviewForm.get('comment')?.value?.length || 0 }}/1000</mat-hint>
+        </mat-form-field>
+        <div class="error-message" *ngIf="isFieldInvalid('comment')">
+          {{ getFieldError('comment') }}
+        </div>
+
+        <!-- Tags Section -->
+        <div class="tags-section">
+          <label class="tags-label">Tags (Optional)</label>
+          <p class="tags-hint">Select up to 5 tags that describe your experience</p>
+          
+          <div class="tags-container">
+            <mat-chip 
+              *ngFor="let tag of availableTags" 
+              [class.selected]="selectedTags.includes(tag)"
+              (click)="onTagToggle(tag)"
+              class="tag-chip">
+              {{ tag }}
+            </mat-chip>
+          </div>
+
+          <div class="custom-tag-input">
+            <mat-form-field appearance="outline" class="custom-tag-field">
+              <mat-label>Add custom tag</mat-label>
+              <input matInput 
+                     #customTagInput
+                     placeholder="Type a custom tag..."
+                     (keyup.enter)="addCustomTag(customTagInput.value); customTagInput.value = ''">
+            </mat-form-field>
+            <button mat-button 
+                    type="button"
+                    (click)="addCustomTag(customTagInput.value); customTagInput.value = ''"
+                    class="add-tag-button">
+              Add
+            </button>
+          </div>
+
+          <div class="selected-tags" *ngIf="selectedTags.length > 0">
+            <span class="selected-tags-label">Selected tags:</span>
+            <mat-chip 
+              *ngFor="let tag of selectedTags" 
+              class="selected-tag-chip"
+              (click)="onTagToggle(tag)">
+              {{ tag }}
+              <mat-icon matChipRemove>close</mat-icon>
+            </mat-chip>
+          </div>
+        </div>
+
+        <!-- Images Section -->
+        <div class="images-section">
+          <label class="images-label">Photos (Optional)</label>
+          <p class="images-hint">Add up to 5 photos to show your experience</p>
+          
+          <div class="image-upload-container">
+            <input type="file" 
+                   #fileInput
+                   multiple 
+                   accept="image/*"
+                   (change)="onImageSelected($event)"
+                   style="display: none;">
+            
+            <button mat-raised-button 
+                    type="button"
+                    (click)="fileInput.click()"
+                    class="upload-button"
+                    [disabled]="selectedImages.length >= 5">
+              <mat-icon>add_photo_alternate</mat-icon>
+              Add Photos
+            </button>
+            
+            <span class="upload-hint">
+              {{ selectedImages.length }}/5 photos selected
+            </span>
+          </div>
+
+          <div class="image-previews" *ngIf="imagePreviews.length > 0">
+            <div class="image-preview" *ngFor="let preview of imagePreviews; let i = index">
+              <img [src]="preview" [alt]="'Review image ' + (i + 1)">
+              <button mat-icon-button 
+                      class="remove-image-button"
+                      (click)="removeImage(i)"
+                      type="button">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button mat-button 
+                  type="button" 
+                  (click)="onCancel()"
+                  [disabled]="loading">
+            Cancel
+          </button>
+          <button mat-raised-button 
+                  color="primary" 
+                  type="submit"
+                  [disabled]="loading || reviewForm.invalid">
+            <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+            <span *ngIf="!loading">{{ mode === 'create' ? 'Submit Review' : 'Update Review' }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

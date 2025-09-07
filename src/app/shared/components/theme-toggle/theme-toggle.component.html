@@ -1,0 +1,28 @@
+<div class="theme-toggle">
+  <!-- Simple Toggle Button -->
+  <button mat-icon-button 
+          (click)="onToggleTheme()"
+          [matTooltip]="'Switch to ' + (isDarkMode ? 'light' : 'dark') + ' theme'"
+          class="theme-toggle-button">
+    <mat-icon>{{ getCurrentThemeIcon() }}</mat-icon>
+  </button>
+
+  <!-- Theme Menu (Alternative) -->
+  <button mat-icon-button 
+          [matMenuTriggerFor]="themeMenu"
+          [matTooltip]="'Theme options'"
+          class="theme-menu-button">
+    <mat-icon>{{ getCurrentThemeIcon() }}</mat-icon>
+  </button>
+
+  <mat-menu #themeMenu="matMenu" class="theme-menu">
+    <button mat-menu-item 
+            *ngFor="let theme of availableThemes"
+            (click)="onThemeChange(theme.value)"
+            [class.active]="currentTheme === theme.value">
+      <mat-icon>{{ theme.icon }}</mat-icon>
+      <span>{{ theme.label }}</span>
+      <mat-icon *ngIf="currentTheme === theme.value" class="check-icon">check</mat-icon>
+    </button>
+  </mat-menu>
+</div>

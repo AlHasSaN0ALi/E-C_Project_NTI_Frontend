@@ -1,0 +1,25 @@
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.spinner-container.inline {
+  flex-direction: row;
+  padding: 0.5rem;
+  gap: 0.5rem;
+}
+
+.spinner-text {
+  margin: 1rem 0 0 0;
+  color: #666;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.spinner-container.inline .spinner-text {
+  margin: 0;
+  font-size: 0.8rem;
+}

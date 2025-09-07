@@ -1,0 +1,109 @@
+<div class="image-upload">
+  <!-- File Input (Hidden) -->
+  <input #fileInput
+         type="file"
+         [multiple]="multiple"
+         [accept]="allowedTypes.join(',')"
+         (change)="onFileSelected($event)"
+         style="display: none;">
+
+  <!-- Upload Area -->
+  <div class="upload-area"
+       [class.disabled]="disabled"
+       [class.drag-over]="false"
+       (click)="triggerFileInput()"
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave($event)"
+       (drop)="onDrop($event)">
+    
+    <div class="upload-content" *ngIf="images.length === 0">
+      <mat-icon class="upload-icon">cloud_upload</mat-icon>
+      <h3>Upload Images</h3>
+      <p>Drag and drop images here or click to browse</p>
+      <div class="upload-info">
+        <span class="file-types">{{ allowedTypes.join(', ') }}</span>
+        <span class="file-size">Max {{ formatFileSize(maxFileSize) }}</span>
+        <span class="file-count" *ngIf="multiple">Max {{ maxFiles }} files</span>
+      </div>
+    </div>
+
+    <!-- Images Grid -->
+    <div class="images-grid" *ngIf="images.length > 0">
+      <div class="image-item" 
+           *ngFor="let image of images; let i = index"
+           [class.uploading]="image.uploading"
+           [class.error]="image.error">
+        
+        <!-- Image Preview -->
+        <div class="image-preview">
+          <img [src]="image.preview" [alt]="image.file.name">
+          
+          <!-- Upload Progress -->
+          <div class="upload-overlay" *ngIf="image.uploading">
+            <mat-progress-bar 
+              [value]="image.progress || 0"
+              mode="determinate">
+            </mat-progress-bar>
+            <span class="progress-text">{{ image.progress || 0 }}%</span>
+          </div>
+
+          <!-- Error Overlay -->
+          <div class="error-overlay" *ngIf="image.error">
+            <mat-icon>error</mat-icon>
+            <span>{{ image.error }}</span>
+          </div>
+
+          <!-- Remove Button -->
+          <button mat-icon-button 
+                  class="remove-button"
+                  (click)="removeImage(i)"
+                  [disabled]="image.uploading"
+                  matTooltip="Remove image">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- Image Info -->
+        <div class="image-info">
+          <span class="file-name" [title]="image.file.name">{{ image.file.name }}</span>
+          <span class="file-size">{{ getFileSize(image.file) }}</span>
+        </div>
+      </div>
+
+      <!-- Add More Button -->
+      <div class="add-more" 
+           *ngIf="canAddMore()"
+           (click)="triggerFileInput()">
+        <mat-icon>add</mat-icon>
+        <span>Add More</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="upload-actions" *ngIf="images.length > 0">
+    <button mat-button 
+            (click)="clearImages()"
+            [disabled]="uploading">
+      <mat-icon>clear_all</mat-icon>
+      Clear All
+    </button>
+    
+    <button mat-raised-button 
+            color="primary"
+            (click)="uploadImages()"
+            [disabled]="!canUpload()">
+      <mat-icon>cloud_upload</mat-icon>
+      {{ uploading ? 'Uploading...' : 'Upload Images' }}
+    </button>
+  </div>
+
+  <!-- Global Upload Progress -->
+  <div class="global-progress" *ngIf="uploading">
+    <mat-progress-bar 
+      [value]="uploadProgressValue"
+      mode="determinate">
+    </mat-progress-bar>
+    <span class="progress-text">Uploading... {{ uploadProgressValue }}%</span>
+  </div>
+</div>

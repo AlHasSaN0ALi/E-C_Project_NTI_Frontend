@@ -1,0 +1,613 @@
+@import 'themes.scss';
+
+// Button Components
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  border-radius: $border-radius-md;
+  transition: all $transition-fast;
+  min-height: $button-height-md;
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  // Button Sizes
+  &.btn-sm {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-xs;
+    min-height: $button-height-sm;
+  }
+
+  &.btn-lg {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-lg;
+    min-height: $button-height-lg;
+  }
+
+  // Button Variants
+  &.btn-primary {
+    background-color: $primary-color;
+    border-color: $primary-color;
+    color: $primary-contrast;
+
+    &:hover:not(:disabled) {
+      background-color: $primary-dark;
+      border-color: $primary-dark;
+    }
+  }
+
+  &.btn-secondary {
+    background-color: $secondary-color;
+    border-color: $secondary-color;
+    color: $secondary-contrast;
+
+    &:hover:not(:disabled) {
+      background-color: $secondary-dark;
+      border-color: $secondary-dark;
+    }
+  }
+
+  &.btn-outline-primary {
+    background-color: transparent;
+    border-color: $primary-color;
+    color: $primary-color;
+
+    &:hover:not(:disabled) {
+      background-color: $primary-color;
+      color: $primary-contrast;
+    }
+  }
+
+  &.btn-outline-secondary {
+    background-color: transparent;
+    border-color: $secondary-color;
+    color: $secondary-color;
+
+    &:hover:not(:disabled) {
+      background-color: $secondary-color;
+      color: $secondary-contrast;
+    }
+  }
+
+  &.btn-ghost {
+    background-color: transparent;
+    border-color: transparent;
+    color: $text-primary;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  &.btn-danger {
+    background-color: $error-color;
+    border-color: $error-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($error-color, 10%);
+      border-color: darken($error-color, 10%);
+    }
+  }
+
+  &.btn-success {
+    background-color: $success-color;
+    border-color: $success-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($success-color, 10%);
+      border-color: darken($success-color, 10%);
+    }
+  }
+}
+
+// Card Components
+.card {
+  background-color: $card-color;
+  border: 1px solid $divider-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  transition: all $transition-normal;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    padding: $spacing-lg;
+    border-bottom: 1px solid $divider-color;
+    background-color: $surface-color;
+
+    .card-title {
+      margin: 0;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-medium;
+      color: $text-primary;
+    }
+
+    .card-subtitle {
+      margin: $spacing-xs 0 0 0;
+      font-size: $font-size-sm;
+      color: $text-secondary;
+    }
+  }
+
+  .card-body {
+    padding: $spacing-lg;
+  }
+
+  .card-footer {
+    padding: $spacing-lg;
+    border-top: 1px solid $divider-color;
+    background-color: $surface-color;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+}
+
+// Product Card
+.product-card {
+  @extend .card;
+  height: $product-card-height;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all $transition-normal;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+
+  .product-image {
+    width: 100%;
+    height: $product-card-image-height;
+    object-fit: cover;
+    background-color: $background-color;
+  }
+
+  .product-content {
+    padding: $product-card-padding;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .product-title {
+      font-size: $font-size-md;
+      font-weight: $font-weight-medium;
+      color: $text-primary;
+      margin: 0 0 $spacing-sm 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-description {
+      font-size: $font-size-sm;
+      color: $text-secondary;
+      margin: 0 0 $spacing-sm 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-price {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $primary-color;
+      margin: 0 0 $spacing-sm 0;
+    }
+
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      margin: 0 0 $spacing-sm 0;
+
+      .rating-stars {
+        color: $warning-color;
+      }
+
+      .rating-count {
+        font-size: $font-size-xs;
+        color: $text-secondary;
+      }
+    }
+
+    .product-actions {
+      display: flex;
+      gap: $spacing-sm;
+      margin-top: auto;
+
+      .btn {
+        flex: 1;
+      }
+    }
+  }
+}
+
+// Form Components
+.form-group {
+  margin-bottom: $spacing-lg;
+
+  .form-label {
+    display: block;
+    margin-bottom: $spacing-xs;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: $input-padding;
+    font-size: $font-size-md;
+    line-height: 1.5;
+    color: $text-primary;
+    background-color: $surface-color;
+    border: 1px solid $divider-color;
+    border-radius: $input-border-radius;
+    transition: all $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+    }
+
+    &:disabled {
+      background-color: $text-disabled;
+      color: $text-hint;
+      cursor: not-allowed;
+    }
+
+    &.is-invalid {
+      border-color: $error-color;
+    }
+
+    &.is-valid {
+      border-color: $success-color;
+    }
+  }
+
+  .form-text {
+    margin-top: $spacing-xs;
+    font-size: $font-size-xs;
+    color: $text-secondary;
+  }
+
+  .invalid-feedback {
+    display: block;
+    margin-top: $spacing-xs;
+    font-size: $font-size-xs;
+    color: $error-color;
+  }
+
+  .valid-feedback {
+    display: block;
+    margin-top: $spacing-xs;
+    font-size: $font-size-xs;
+    color: $success-color;
+  }
+}
+
+// Input Group
+.input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+
+  .form-control {
+    border-radius: 0;
+    border-right: none;
+
+    &:first-child {
+      border-top-left-radius: $input-border-radius;
+      border-bottom-left-radius: $input-border-radius;
+    }
+
+    &:last-child {
+      border-top-right-radius: $input-border-radius;
+      border-bottom-right-radius: $input-border-radius;
+      border-right: 1px solid $divider-color;
+    }
+  }
+
+  .input-group-append {
+    display: flex;
+    align-items: center;
+    padding: $spacing-sm $spacing-md;
+    background-color: $background-color;
+    border: 1px solid $divider-color;
+    border-left: none;
+    border-top-right-radius: $input-border-radius;
+    border-bottom-right-radius: $input-border-radius;
+  }
+}
+
+// Badge Components
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: $border-radius-sm;
+
+  &.badge-primary {
+    background-color: $primary-color;
+    color: $primary-contrast;
+  }
+
+  &.badge-secondary {
+    background-color: $secondary-color;
+    color: $secondary-contrast;
+  }
+
+  &.badge-success {
+    background-color: $success-color;
+    color: white;
+  }
+
+  &.badge-warning {
+    background-color: $warning-color;
+    color: white;
+  }
+
+  &.badge-danger {
+    background-color: $error-color;
+    color: white;
+  }
+
+  &.badge-info {
+    background-color: $info-color;
+    color: white;
+  }
+
+  &.badge-light {
+    background-color: $background-color;
+    color: $text-primary;
+  }
+
+  &.badge-dark {
+    background-color: $text-primary;
+    color: white;
+  }
+}
+
+// Alert Components
+.alert {
+  padding: $spacing-md $spacing-lg;
+  margin-bottom: $spacing-lg;
+  border: 1px solid transparent;
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+
+  &.alert-primary {
+    background-color: rgba(33, 150, 243, 0.1);
+    border-color: rgba(33, 150, 243, 0.2);
+    color: $primary-dark;
+  }
+
+  &.alert-secondary {
+    background-color: rgba(255, 152, 0, 0.1);
+    border-color: rgba(255, 152, 0, 0.2);
+    color: $secondary-dark;
+  }
+
+  &.alert-success {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-color: rgba(76, 175, 80, 0.2);
+    color: $success-color;
+  }
+
+  &.alert-warning {
+    background-color: rgba(255, 152, 0, 0.1);
+    border-color: rgba(255, 152, 0, 0.2);
+    color: $warning-color;
+  }
+
+  &.alert-danger {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-color: rgba(244, 67, 54, 0.2);
+    color: $error-color;
+  }
+
+  &.alert-info {
+    background-color: rgba(33, 150, 243, 0.1);
+    border-color: rgba(33, 150, 243, 0.2);
+    color: $info-color;
+  }
+}
+
+// Loading Components
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid $divider-color;
+  border-radius: 50%;
+  border-top-color: $primary-color;
+  animation: spin 1s ease-in-out infinite;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+
+  .loading-content {
+    text-align: center;
+    color: $text-primary;
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      margin-bottom: $spacing-md;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Pagination
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  margin: $spacing-lg 0;
+
+  .page-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    border: 1px solid $divider-color;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover:not(.disabled) {
+      background-color: $primary-color;
+      color: $primary-contrast;
+      border-color: $primary-color;
+    }
+
+    &.active {
+      background-color: $primary-color;
+      color: $primary-contrast;
+      border-color: $primary-color;
+    }
+
+    &.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Breadcrumb
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin: $spacing-md 0;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    &:not(:last-child)::after {
+      content: '/';
+      color: $text-hint;
+    }
+
+    a {
+      color: $text-secondary;
+      text-decoration: none;
+
+      &:hover {
+        color: $primary-color;
+        text-decoration: underline;
+      }
+    }
+
+    &.active {
+      color: $text-primary;
+    }
+  }
+}
+
+// Dark Theme Support
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: $dark-card;
+    border-color: $dark-divider;
+  }
+
+  .product-card {
+    .product-content {
+      .product-title {
+        color: $dark-text-primary;
+      }
+
+      .product-description {
+        color: $dark-text-secondary;
+      }
+    }
+  }
+
+  .form-group {
+    .form-label {
+      color: $dark-text-primary;
+    }
+
+    .form-control {
+      background-color: $dark-surface;
+      color: $dark-text-primary;
+      border-color: $dark-divider;
+
+      &:focus {
+        border-color: $primary-color;
+      }
+    }
+  }
+
+  .loading-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: $dark-text-primary;
+  }
+}

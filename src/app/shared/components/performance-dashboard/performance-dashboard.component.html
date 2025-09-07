@@ -1,0 +1,243 @@
+<div class="performance-dashboard">
+  <!-- Performance Summary Card -->
+  <mat-card class="performance-summary">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon [color]="getStatusColor()">{{ getStatusIcon() }}</mat-icon>
+        Performance Dashboard
+      </mat-card-title>
+      <mat-card-subtitle>
+        Real-time performance monitoring
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="performance-score">
+        <div class="score-circle">
+          <mat-progress-bar 
+            [value]="performanceScore" 
+            mode="determinate"
+            [color]="getScoreColor()">
+          </mat-progress-bar>
+          <span class="score-text">{{ performanceScore }}/100</span>
+        </div>
+        <div class="score-info">
+          <h3>Performance Score</h3>
+          <mat-chip [color]="getStatusColor()" selected>
+            {{ performanceStatus | titlecase }}
+          </mat-chip>
+        </div>
+      </div>
+      
+      <div class="quick-stats">
+        <div class="stat-item">
+          <mat-icon>schedule</mat-icon>
+          <span class="stat-value">{{ formatTime(metrics.loadTime) }}</span>
+          <span class="stat-label">Load Time</span>
+        </div>
+        <div class="stat-item">
+          <mat-icon>memory</mat-icon>
+          <span class="stat-value">{{ formatMemory(metrics.memoryUsage) }}</span>
+          <span class="stat-label">Memory</span>
+        </div>
+        <div class="stat-item">
+          <mat-icon>error</mat-icon>
+          <span class="stat-value">{{ metrics.errorCount }}</span>
+          <span class="stat-label">Errors</span>
+        </div>
+        <div class="stat-item">
+          <mat-icon>network_check</mat-icon>
+          <span class="stat-value">{{ metrics.networkRequests }}</span>
+          <span class="stat-label">Requests</span>
+        </div>
+      </div>
+    </mat-card-content>
+    
+    <mat-card-actions>
+      <button mat-button (click)="refreshMetrics()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+      <button mat-button (click)="resetMetrics()">
+        <mat-icon>restart_alt</mat-icon>
+        Reset
+      </button>
+      <button mat-button (click)="toggleExpansion()">
+        <mat-icon>{{ isExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+        {{ isExpanded ? 'Hide' : 'Show' }} Details
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Detailed Metrics -->
+  <mat-expansion-panel 
+    [expanded]="isExpanded" 
+    class="detailed-metrics"
+    *ngIf="isExpanded">
+    
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>analytics</mat-icon>
+        Detailed Metrics
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    
+    <div class="metrics-grid">
+      <!-- Load Time Metric -->
+      <mat-card class="metric-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>schedule</mat-icon>
+            Load Time
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="metric-value">{{ formatTime(metrics.loadTime) }}</div>
+          <div class="metric-status">
+            <mat-chip [color]="getLoadTimeStatus()" selected>
+              {{ getLoadTimeStatus() | titlecase }}
+            </mat-chip>
+          </div>
+          <mat-progress-bar 
+            [value]="Math.min(100, (3000 - metrics.loadTime) / 30)"
+            mode="determinate"
+            [color]="getLoadTimeStatus()">
+          </mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Memory Usage Metric -->
+      <mat-card class="metric-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>memory</mat-icon>
+            Memory Usage
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="metric-value">{{ formatMemory(metrics.memoryUsage) }}</div>
+          <div class="metric-status">
+            <mat-chip [color]="getMemoryStatus()" selected>
+              {{ getMemoryStatus() | titlecase }}
+            </mat-chip>
+          </div>
+          <mat-progress-bar 
+            [value]="Math.min(100, (100 - metrics.memoryUsage) / 100 * 100)"
+            mode="determinate"
+            [color]="getMemoryStatus()">
+          </mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Error Count Metric -->
+      <mat-card class="metric-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>error</mat-icon>
+            Error Count
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="metric-value">{{ metrics.errorCount }}</div>
+          <div class="metric-status">
+            <mat-chip [color]="getErrorStatus()" selected>
+              {{ getErrorStatus() | titlecase }}
+            </mat-chip>
+          </div>
+          <mat-progress-bar 
+            [value]="Math.max(0, 100 - metrics.errorCount * 20)"
+            mode="determinate"
+            [color]="getErrorStatus()">
+          </mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Network Requests Metric -->
+      <mat-card class="metric-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>network_check</mat-icon>
+            Network Requests
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="metric-value">{{ metrics.networkRequests }}</div>
+          <div class="metric-status">
+            <mat-chip color="primary" selected>
+              Active
+            </mat-chip>
+          </div>
+          <mat-progress-bar 
+            [value]="Math.min(100, metrics.networkRequests / 50 * 100)"
+            mode="determinate"
+            color="primary">
+          </mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- User Interactions Metric -->
+      <mat-card class="metric-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>touch_app</mat-icon>
+            User Interactions
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="metric-value">{{ metrics.userInteractions }}</div>
+          <div class="metric-status">
+            <mat-chip color="accent" selected>
+              Engaged
+            </mat-chip>
+          </div>
+          <mat-progress-bar 
+            [value]="Math.min(100, metrics.userInteractions / 100 * 100)"
+            mode="determinate"
+            color="accent">
+          </mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Render Time Metric -->
+      <mat-card class="metric-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>speed</mat-icon>
+            Render Time
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="metric-value">{{ formatTime(metrics.renderTime) }}</div>
+          <div class="metric-status">
+            <mat-chip color="primary" selected>
+              Optimized
+            </mat-chip>
+          </div>
+          <mat-progress-bar 
+            [value]="Math.min(100, (1000 - metrics.renderTime) / 10)"
+            mode="determinate"
+            color="primary">
+          </mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- Performance Recommendations -->
+  <mat-card class="recommendations-card" *ngIf="recommendations.length > 0">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>lightbulb</mat-icon>
+        Performance Recommendations
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ul class="recommendations-list">
+        <li *ngFor="let recommendation of recommendations" class="recommendation-item">
+          <mat-icon>arrow_forward</mat-icon>
+          <span>{{ recommendation }}</span>
+        </li>
+      </ul>
+    </mat-card-content>
+  </mat-card>
+</div>

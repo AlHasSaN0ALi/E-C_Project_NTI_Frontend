@@ -1,0 +1,25 @@
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 64px; /* Account for fixed header height */
+}
+
+/* Ensure proper spacing for different routes */
+.main-content > * {
+  min-height: calc(100vh - 140px); /* Adjust based on header height */
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 56px; /* Smaller header height on mobile */
+  }
+  
+  .main-content > * {
+    min-height: calc(100vh - 120px);
+  }
+}

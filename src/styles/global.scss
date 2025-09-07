@@ -1,0 +1,643 @@
+@import 'themes.scss';
+
+// Global Reset and Base Styles
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family-primary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-regular;
+  line-height: 1.6;
+  color: $text-primary;
+  background-color: $background-color;
+  overflow-x: hidden;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 $spacing-md 0;
+  font-weight: $font-weight-medium;
+  line-height: 1.2;
+  color: $text-primary;
+}
+
+h1 {
+  font-size: $font-size-xxxl;
+  font-weight: $font-weight-bold;
+}
+
+h2 {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+}
+
+h3 {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-medium;
+}
+
+h4 {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+}
+
+h5 {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+}
+
+h6 {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+p {
+  margin: 0 0 $spacing-md 0;
+  color: $text-secondary;
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $primary-dark;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+// Lists
+ul, ol {
+  margin: 0 0 $spacing-md 0;
+  padding-left: $spacing-lg;
+}
+
+li {
+  margin-bottom: $spacing-xs;
+}
+
+// Images
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+// Buttons
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  text-transform: none;
+  -webkit-appearance: button;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  transition: all $transition-fast;
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// Form Elements
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  margin: 0;
+  padding: $input-padding;
+  border: 1px solid $divider-color;
+  border-radius: $input-border-radius;
+  background-color: $surface-color;
+  color: $text-primary;
+  transition: all $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+  }
+
+  &:disabled {
+    background-color: $text-disabled;
+    color: $text-hint;
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: $text-hint;
+  }
+}
+
+// Utility Classes
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: 0 $spacing-sm;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-primary {
+  color: $primary-color;
+}
+
+.text-secondary {
+  color: $text-secondary;
+}
+
+.text-success {
+  color: $success-color;
+}
+
+.text-warning {
+  color: $warning-color;
+}
+
+.text-error {
+  color: $error-color;
+}
+
+.text-info {
+  color: $info-color;
+}
+
+.bg-primary {
+  background-color: $primary-color;
+  color: $primary-contrast;
+}
+
+.bg-secondary {
+  background-color: $secondary-color;
+  color: $secondary-contrast;
+}
+
+.bg-success {
+  background-color: $success-color;
+  color: white;
+}
+
+.bg-warning {
+  background-color: $warning-color;
+  color: white;
+}
+
+.bg-error {
+  background-color: $error-color;
+  color: white;
+}
+
+.bg-info {
+  background-color: $info-color;
+  color: white;
+}
+
+// Spacing Utilities
+.m-0 { margin: 0; }
+.m-1 { margin: $spacing-xs; }
+.m-2 { margin: $spacing-sm; }
+.m-3 { margin: $spacing-md; }
+.m-4 { margin: $spacing-lg; }
+.m-5 { margin: $spacing-xl; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: $spacing-xs; }
+.p-2 { padding: $spacing-sm; }
+.p-3 { padding: $spacing-md; }
+.p-4 { padding: $spacing-lg; }
+.p-5 { padding: $spacing-xl; }
+
+// Flexbox Utilities
+.d-flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.justify-content-start {
+  justify-content: flex-start;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.justify-content-around {
+  justify-content: space-around;
+}
+
+.align-items-start {
+  align-items: flex-start;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.align-items-end {
+  align-items: flex-end;
+}
+
+.align-items-stretch {
+  align-items: stretch;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+// Grid Utilities
+.d-grid {
+  display: grid;
+}
+
+.grid-template-columns-1 {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.grid-template-columns-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-template-columns-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-template-columns-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.gap-1 {
+  gap: $spacing-xs;
+}
+
+.gap-2 {
+  gap: $spacing-sm;
+}
+
+.gap-3 {
+  gap: $spacing-md;
+}
+
+.gap-4 {
+  gap: $spacing-lg;
+}
+
+.gap-5 {
+  gap: $spacing-xl;
+}
+
+// Display Utilities
+.d-none {
+  display: none;
+}
+
+.d-block {
+  display: block;
+}
+
+.d-inline {
+  display: inline;
+}
+
+.d-inline-block {
+  display: inline-block;
+}
+
+// Position Utilities
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+
+.position-fixed {
+  position: fixed;
+}
+
+.position-sticky {
+  position: sticky;
+}
+
+// Shadow Utilities
+.shadow-sm {
+  box-shadow: $shadow-sm;
+}
+
+.shadow-md {
+  box-shadow: $shadow-md;
+}
+
+.shadow-lg {
+  box-shadow: $shadow-lg;
+}
+
+.shadow-xl {
+  box-shadow: $shadow-xl;
+}
+
+// Border Utilities
+.border {
+  border: 1px solid $divider-color;
+}
+
+.border-0 {
+  border: none;
+}
+
+.border-top {
+  border-top: 1px solid $divider-color;
+}
+
+.border-bottom {
+  border-bottom: 1px solid $divider-color;
+}
+
+.border-left {
+  border-left: 1px solid $divider-color;
+}
+
+.border-right {
+  border-right: 1px solid $divider-color;
+}
+
+.rounded {
+  border-radius: $border-radius-md;
+}
+
+.rounded-sm {
+  border-radius: $border-radius-sm;
+}
+
+.rounded-lg {
+  border-radius: $border-radius-lg;
+}
+
+.rounded-xl {
+  border-radius: $border-radius-xl;
+}
+
+.rounded-circle {
+  border-radius: 50%;
+}
+
+// Animation Utilities
+.fade-in {
+  animation: fadeIn $transition-normal ease-in-out;
+}
+
+.slide-in-up {
+  animation: slideInUp $transition-normal ease-out;
+}
+
+.slide-in-down {
+  animation: slideInDown $transition-normal ease-out;
+}
+
+.scale-in {
+  animation: scaleIn $transition-normal ease-out;
+}
+
+.bounce-in {
+  animation: bounceIn $transition-slow ease-out;
+}
+
+// Keyframe Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Responsive Utilities
+@media (max-width: $breakpoint-sm) {
+  .d-sm-none {
+    display: none;
+  }
+  
+  .d-sm-block {
+    display: block;
+  }
+  
+  .d-sm-flex {
+    display: flex;
+  }
+  
+  .text-sm-center {
+    text-align: center;
+  }
+  
+  .flex-sm-column {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .d-md-none {
+    display: none;
+  }
+  
+  .d-md-block {
+    display: block;
+  }
+  
+  .d-md-flex {
+    display: flex;
+  }
+  
+  .text-md-center {
+    text-align: center;
+  }
+  
+  .flex-md-column {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .d-lg-none {
+    display: none;
+  }
+  
+  .d-lg-block {
+    display: block;
+  }
+  
+  .d-lg-flex {
+    display: flex;
+  }
+  
+  .text-lg-center {
+    text-align: center;
+  }
+  
+  .flex-lg-column {
+    flex-direction: column;
+  }
+}
+
+// Dark Theme Support
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: $dark-background;
+    color: $dark-text-primary;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: $dark-text-primary;
+  }
+
+  p {
+    color: $dark-text-secondary;
+  }
+
+  input, textarea, select {
+    background-color: $dark-surface;
+    color: $dark-text-primary;
+    border-color: $dark-divider;
+
+    &:focus {
+      border-color: $primary-color;
+    }
+  }
+}
+
+// Print Styles
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a, a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

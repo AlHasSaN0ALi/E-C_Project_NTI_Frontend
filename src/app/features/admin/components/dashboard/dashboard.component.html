@@ -1,0 +1,305 @@
+<div class="admin-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <button mat-raised-button color="primary" (click)="onRefresh()" [disabled]="loading">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" *ngIf="!loading && stats">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon users">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.totalUsers | number }}</h3>
+              <p>Total Users</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon products">
+              <mat-icon>inventory</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.totalProducts | number }}</h3>
+              <p>Total Products</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon orders">
+              <mat-icon>shopping_cart</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.totalOrders | number }}</h3>
+              <p>Total Orders</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon revenue">
+              <mat-icon>attach_money</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ formatCurrency(stats.totalRevenue) }}</h3>
+              <p>Total Revenue</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card warning">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon pending">
+              <mat-icon>schedule</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.pendingOrders | number }}</h3>
+              <p>Pending Orders</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card warning">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon low-stock">
+              <mat-icon>warning</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.lowStockProducts | number }}</h3>
+              <p>Low Stock Products</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <mat-card class="actions-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>flash_on</mat-icon>
+            Quick Actions
+          </mat-card-title>
+          <mat-card-subtitle>Common administrative tasks</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="actions-grid">
+            <button mat-raised-button color="primary" routerLink="/admin/users">
+              <mat-icon>people</mat-icon>
+              Manage Users
+            </button>
+            <button mat-raised-button color="accent" routerLink="/admin/products">
+              <mat-icon>inventory</mat-icon>
+              Manage Products
+            </button>
+            <button mat-raised-button color="warn" routerLink="/admin/orders">
+              <mat-icon>shopping_cart</mat-icon>
+              Manage Orders
+            </button>
+            <button mat-raised-button color="primary" routerLink="/admin/categories">
+              <mat-icon>category</mat-icon>
+              Manage Categories
+            </button>
+            <button mat-raised-button color="accent" routerLink="/admin/reviews">
+              <mat-icon>rate_review</mat-icon>
+              Manage Reviews
+            </button>
+            <button mat-raised-button color="primary" routerLink="/admin/menu">
+              <mat-icon>menu</mat-icon>
+              Manage Menu
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="main-content">
+      <!-- Recent Orders -->
+      <mat-card class="content-card">
+        <mat-card-header>
+          <mat-card-title>Recent Orders</mat-card-title>
+          <mat-card-subtitle>Latest customer orders</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="table-container">
+            <table mat-table [dataSource]="stats.recentOrders" class="orders-table">
+              <!-- Order Number Column -->
+              <ng-container matColumnDef="orderNumber">
+                <th mat-header-cell *matHeaderCellDef>Order #</th>
+                <td mat-cell *matCellDef="let order">
+                  <span class="order-number">{{ order.orderNumber }}</span>
+                </td>
+              </ng-container>
+
+              <!-- Customer Column -->
+              <ng-container matColumnDef="customer">
+                <th mat-header-cell *matHeaderCellDef>Customer</th>
+                <td mat-cell *matCellDef="let order">
+                  <div class="customer-info">
+                    <span class="customer-name">{{ order.shippingAddress.name }}</span>
+                    <span class="customer-email">{{ order.user }}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Total Column -->
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>Total</th>
+                <td mat-cell *matCellDef="let order">
+                  <span class="order-total">{{ formatCurrency(order.totalAmount) }}</span>
+                </td>
+              </ng-container>
+
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let order">
+                  <mat-chip [color]="getStatusColor(order.status)" selected>
+                    <mat-icon>{{ getStatusIcon(order.status) }}</mat-icon>
+                    {{ order.status | titlecase }}
+                  </mat-chip>
+                </td>
+              </ng-container>
+
+              <!-- Date Column -->
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Date</th>
+                <td mat-cell *matCellDef="let order">
+                  <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+                </td>
+              </ng-container>
+
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let order">
+                  <button mat-icon-button (click)="onViewOrder(order)" matTooltip="View Order">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button routerLink="/admin/orders">View All Orders</button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Top Products -->
+      <mat-card class="content-card">
+        <mat-card-header>
+          <mat-card-title>Top Products</mat-card-title>
+          <mat-card-subtitle>Best selling products</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="products-list" *ngIf="stats.topProducts.length > 0; else noProducts">
+            <div class="product-item" *ngFor="let product of stats.topProducts">
+              <div class="product-image">
+                <img [src]="product.images[0] || 'assets/images/placeholder.png'" [alt]="product.name">
+              </div>
+              <div class="product-info">
+                <h4 class="product-name">{{ product.name }}</h4>
+                <p class="product-price">{{ formatCurrency(product.price) }}</p>
+                <div class="product-stats">
+                  <span class="stock">Stock: {{ product.stock }}</span>
+                  <span class="category">{{ product.category }}</span>
+                </div>
+              </div>
+              <div class="product-actions">
+                <button mat-icon-button (click)="onViewProduct(product)" matTooltip="View Product">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <ng-template #noProducts>
+            <div class="empty-state">
+              <mat-icon>inventory</mat-icon>
+              <p>No products available</p>
+            </div>
+          </ng-template>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button routerLink="/admin/products">View All Products</button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Recent Reviews -->
+      <mat-card class="content-card">
+        <mat-card-header>
+          <mat-card-title>Recent Reviews</mat-card-title>
+          <mat-card-subtitle>Latest customer reviews</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="reviews-list" *ngIf="stats.recentReviews.length > 0; else noReviews">
+            <div class="review-item" *ngFor="let review of stats.recentReviews">
+              <div class="review-header">
+                <div class="reviewer-info">
+                  <span class="reviewer-name">{{ review.user.firstName }} {{ review.user.lastName }}</span>
+                  <div class="review-rating">
+                    <mat-icon *ngFor="let star of [1,2,3,4,5]" 
+                              [class.filled]="star <= review.rating"
+                              [class.empty]="star > review.rating">
+                      {{ star <= review.rating ? 'star' : 'star_border' }}
+                    </mat-icon>
+                  </div>
+                </div>
+                <span class="review-date">{{ formatDate(review.createdAt) }}</span>
+              </div>
+              <p class="review-comment">{{ review.comment }}</p>
+              <div class="review-actions">
+                <button mat-icon-button (click)="onViewReview(review)" matTooltip="View Review">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <ng-template #noReviews>
+            <div class="empty-state">
+              <mat-icon>rate_review</mat-icon>
+              <p>No reviews available</p>
+            </div>
+          </ng-template>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button routerLink="/admin/reviews">View All Reviews</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

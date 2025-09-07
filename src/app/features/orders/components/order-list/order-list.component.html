@@ -1,0 +1,152 @@
+<div class="order-list-container">
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>receipt_long</mat-icon>
+      Order History
+    </h1>
+    <p class="page-subtitle">Track and manage your orders</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <mat-card class="filters-card">
+      <div class="filters-content">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search orders</mat-label>
+          <input matInput [(ngModel)]="searchQuery" placeholder="Order ID, product name...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="status-field">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="statusFilter" (selectionChange)="onStatusFilterChange()">
+            <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="onSearch()" class="search-btn">
+          <mat-icon>search</mat-icon>
+          Search
+        </button>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <app-loading-spinner message="Loading orders..."></app-loading-spinner>
+  </div>
+
+  <!-- Orders List -->
+  <div class="orders-content" *ngIf="!isLoading">
+    <!-- Empty State -->
+    <div class="empty-orders" *ngIf="orders.length === 0">
+      <mat-icon class="empty-icon">receipt_long</mat-icon>
+      <h2>No orders found</h2>
+      <p>You haven't placed any orders yet or no orders match your filters.</p>
+      <button mat-raised-button color="primary" routerLink="/products">
+        <mat-icon>shopping_bag</mat-icon>
+        Start Shopping
+      </button>
+    </div>
+
+    <!-- Orders List -->
+    <div class="orders-list" *ngIf="orders.length > 0">
+      <mat-card *ngFor="let order of orders" class="order-card">
+        <mat-card-header>
+          <div class="order-header">
+            <div class="order-info">
+              <h3 class="order-id">Order #{{ order.orderNumber }}</h3>
+              <p class="order-date">{{ formatDate(order.createdAt) }}</p>
+            </div>
+            <div class="order-status">
+              <mat-chip [color]="getStatusColor(order.status)" selected>
+                <mat-icon>{{ getStatusIcon(order.status) }}</mat-icon>
+                {{ order.status | titlecase }}
+              </mat-chip>
+            </div>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="order-summary">
+            <div class="order-items">
+              <h4>Items ({{ order.items.length }})</h4>
+              <div class="items-preview">
+                <div *ngFor="let item of order.items.slice(0, 3)" class="item-preview">
+                  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==" 
+                       [alt]="item.product.name"
+                       class="item-image">
+                  <div class="item-details">
+                    <span class="item-name">{{ item.product.name }}</span>
+                    <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                  </div>
+                </div>
+                <div *ngIf="order.items.length > 3" class="more-items">
+                  +{{ order.items.length - 3 }} more items
+                </div>
+              </div>
+            </div>
+
+            <div class="order-totals">
+              <div class="total-row">
+                <span>Subtotal:</span>
+                <span>${{ order.subtotal | number:'1.2-2' }}</span>
+              </div>
+              <div class="total-row" *ngIf="order.shippingCost > 0">
+                <span>Shipping:</span>
+                <span>${{ order.shippingCost | number:'1.2-2' }}</span>
+              </div>
+              <div class="total-row" *ngIf="order.taxAmount > 0">
+                <span>Tax:</span>
+                <span>${{ order.taxAmount | number:'1.2-2' }}</span>
+              </div>
+              <div class="total-row" *ngIf="order.discountAmount > 0">
+                <span>Discount:</span>
+                <span class="discount">-${{ order.discountAmount | number:'1.2-2' }}</span>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="total-row total">
+                <span>Total:</span>
+                <span>${{ order.totalAmount | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-actions">
+            <button mat-button [routerLink]="['/orders', order._id]" class="details-btn">
+              <mat-icon>visibility</mat-icon>
+              View Details
+            </button>
+            
+            <button mat-button (click)="trackOrder(order)" class="track-btn" 
+                    *ngIf="order.status !== 'cancelled' && order.status !== 'refunded'">
+              <mat-icon>local_shipping</mat-icon>
+              Track Order
+            </button>
+            
+            <button mat-button color="warn" (click)="cancelOrder(order)" 
+                    class="cancel-btn" 
+                    *ngIf="canCancelOrder(order)">
+              <mat-icon>cancel</mat-icon>
+              Cancel Order
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Pagination -->
+    <mat-paginator
+      *ngIf="totalOrders > pageSize"
+      [length]="totalOrders"
+      [pageSize]="pageSize"
+      [pageIndex]="currentPage"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>
